@@ -85,7 +85,8 @@ capture(){
 
 chain(){
   echo "Command: $command"
-  $command &
+  # SET GODEBUG=http2debug=2 for http2 tracing
+  GRPC_GO_LOG_VERBOSITY_LEVEL=99 GRPC_GO_LOG_SEVERITY_LEVEL=info $command &
   pid=$!
   echo $pid>$pid_file
   wait $pid
