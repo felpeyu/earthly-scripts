@@ -73,10 +73,12 @@ capture(){
   for ((n=0;n<$samples_per_capture;n++)); do
     iteration="$last_modified-$n"
     if [[ $OSTYPE == 'darwin'* ]]; then
-      sample $pid 10 -file "$captures_folder/$iteration.stack" 2>/dev/null
+      sample $pid 10 -file "$captures_folder/$iteration.sample" 2>/dev/null
+      nettop -l 10 -p $pid > "$captures_folder/$iteration.earthly.nettop" 2>/dev/null &
+      nettop -l 10 > "$captures_folder/$iteration.global.nettop" 2>/dev/null &
     else
-      gstack $pid > "$captures_folder/$iteration.stack" 2>/dev/null
-      pstree -pT $pid 2>/dev/null | grep -o '([0-9]\+)' | grep -o '[0-9]\+' |  xargs ps -o pid,ppid,etime,group,nice,pcpu,pgid,rgroup,ruser,time,tty,user,vsz,args -p > "$captures_folder/$iteration.ptree" 2>/dev/null
+      gstack $pid > "$captures_folder/$iteration.gstack" 2>/dev/null
+      pstree -pT $pid 2>/dev/null | grep -o '([0-9]\+)' | grep -o '[0-9]\+' |  xargs ps -o pid,ppid,etime,group,nice,pcpu,pgid,rgroup,ruser,time,tty,user,vsz,args -p > "$captures_folder/$iteration.pstree" 2>/dev/null
     fi
   done
  }
